@@ -81,7 +81,8 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::where('id', $id)->firstOrFail();
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -93,7 +94,15 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $sentData = $request->validate($this->validarionRules);
+
+        $post = Post::findOrFail($id);
+        $sentData['user'] = $post->user;
+        $sentData['date'] = $post->date;
+        $sentData['id'] = $post->id;
+        $post->update($sentData);
+
+        return redirect()->route('admin.posts.index');
     }
 
     /**
