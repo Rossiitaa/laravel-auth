@@ -13,7 +13,7 @@
             </div>
             <div class="d-flex justify-content-center w-100">
                 <a href="{{ route("admin.posts.edit", $post->id) }}" class="btn btn-success me-3">Edit</a>
-                <form action="{{ route('admin.posts.destroy', $post->id) }}" method="post" class="rs_delete_form" data-comic-name="{{ $post->title }}">
+                <form action="{{ route('admin.posts.destroy', $post->id) }}" method="post">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Delete</button>

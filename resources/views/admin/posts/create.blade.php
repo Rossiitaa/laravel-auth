@@ -8,9 +8,10 @@
         <div class="row">
             <div class="col-12">
                 <form action="{{ route('admin.posts.store') }}">
-                @csrf
-                @method('POST')
-                @include('admin.posts.includes.form')
+                    @csrf
+                    @method('POST')
+                    
+                    @include('admin.posts.includes.form')
                 </form>
             </div>
         </div>

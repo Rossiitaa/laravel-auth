@@ -4,11 +4,11 @@
 
 @section('content')
     <div class="container">
-            @if (session('delete'))
-                <div class="alert alert-danger">
-                    {{ session('delete') }} has been deleted!!
-                </div>                
-            @endif
+        @if (session('message'))
+        <div class="alert alert-danger" role="alert">
+            {{ session('message') }}
+        </div>
+    @endif
         <div class="row">
             <div class="col-12">
                 <table class="table table-dark table-striped">
@@ -31,7 +31,7 @@
                                     <a href="{{ route("admin.posts.edit", $post->id) }}" class="btn btn-sm btn-success">Edit</a>
                                 </td>
                                 <td>
-                                    <form action="{{route('admin.posts.destroy', $post->id)}}" method="post" class="rs_delete_form" data-comic-name="{{ $post->title }}">
+                                    <form action="{{route('admin.posts.destroy', $post->id)}}" method="post">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>

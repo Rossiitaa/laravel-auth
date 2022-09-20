@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 class PostsController extends Controller
 {
 
-    protected $validarionRules = [
+    protected $validationRules = [
         'title' => 'required|string|max:255|min:3',
         'content' => 'required|string',
         'image' => 'required|string|active_url',
@@ -38,7 +38,7 @@ class PostsController extends Controller
     public function create()
     {
         $post = new Post();
-        return view('admin.posts.create', compact('post'));
+        return view('admin.posts.create', ['post' => $post]);
     }
 
     /**
@@ -49,16 +49,19 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        $sentData = $request->validate($this->validarionRules);
+        $sentData = $request->all();
 
-        $Post = new Post();
-        $lastPost = Post::orderBy('id', 'desc')->first();
-        $sentData['user'] = Auth::user()->name;
-        $sentData['date'] = new DateTime();
-        $sentData['id'] = $lastPost->id + 1;
-        $post = $Post->create($sentData);
+        $request->validate($this->validationRules);
 
-        return redirect()->route('admin.posts.index');
+        $newPost = new Post;
+        $newPost->user = Auth::user()->name;
+        $newPost->title = $sentData['title']; 
+        $newPost->content = $sentData['content']; 
+        $newPost->image = $sentData['image']; 
+        $newPost->date = new DateTime(); 
+        $newPost->save(); 
+
+        return redirect()->route('admin.posts.show')->with('message', '"'.$sentData['title'].'" has been created');
     }
 
     /**
@@ -81,8 +84,8 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::where('id', $id)->firstOrFail();
-        return view('admin.posts.edit', compact('post'));
+        $post = Post::findOrFail($id);
+        return view('admin.posts.edit', ['post' => $post]);
     }
 
     /**
@@ -94,15 +97,14 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $sentData = $request->validate($this->validarionRules);
+        $request->validate($this->validationRules);
+        $sentData = $request->all();
 
-        $post = Post::findOrFail($id);
-        $sentData['user'] = $post->user;
-        $sentData['date'] = $post->date;
-        $sentData['id'] = $post->id;
-        $post->update($sentData);
+        $newPost = Post::findOrFail($id);
+        
+        $newPost->update($sentData);
 
-        return redirect()->route('admin.posts.index');
+        return redirect()->route('admin.posts.show', $newPost->id)->with('message', '"'.$sentData['title'].'" has been modified');
     }
 
     /**
@@ -116,6 +118,6 @@ class PostsController extends Controller
         $post = Post::findOrFail($id);
         $post->delete();
 
-        return redirect()->route('admin.posts.index')->with('delete', $post->title);
+        return redirect()->route('admin.posts.index')->with('message', '"'.$post->title.'" has been deleted');
     }
 }
