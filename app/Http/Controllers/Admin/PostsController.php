@@ -5,9 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use DateTime;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+
 
 class PostsController extends Controller
 {
+
+    protected $validarionRules = [
+        'title' => 'required|string|max:255|min:3',
+        'content' => 'required|string',
+        'image' => 'required|string|active_url',
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +37,8 @@ class PostsController extends Controller
      */
     public function create()
     {
-        //
+        $post = new Post();
+        return view('admin.posts.create', compact('post'));
     }
 
     /**
@@ -37,7 +49,16 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $sentData = $request->validate($this->validarionRules);
+
+        $Post = new Post();
+        $lastPost = Post::orderBy('id', 'desc')->first();
+        $sentData['user'] = Auth::user()->name;
+        $sentData['date'] = new DateTime();
+        $sentData['id'] = $lastPost->id + 1;
+        $post = $Post->create($sentData);
+
+        return redirect()->route('admin.posts.index');
     }
 
     /**
@@ -48,7 +69,8 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        return view('admin.posts.show', compact('post'));
     }
 
     /**
@@ -82,6 +104,9 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        $post->delete();
+
+        return redirect()->route('admin.posts.index')->with('delete', $post->title);
     }
 }

@@ -1,21 +1,24 @@
 @extends("layouts.app")
 
+@section("title", "Posts Index")
+
 @section('content')
     <div class="container">
-        @if (session("deleted"))
-            <div class="warn delete-warn">
-                Post deleted.
-            </div>
-        @endif
+            @if (session('delete'))
+                <div class="alert alert-danger">
+                    {{ session('delete') }} has been deleted!!
+                </div>                
+            @endif
         <div class="row">
             <div class="col-12">
-                <table class="table table-striped">
+                <table class="table table-dark table-striped">
                     <thead>
                         <td>ID</td>
                         <td>Username</td>
                         <td>Title</td>
                         <td>Date</td>
-                        <td></td>
+                        <td>Edit</td>
+                        <td>Delete</td>
                     </thead>
                     <tbody>
                         @forelse ($posts as $post)
@@ -26,10 +29,12 @@
                                 <td>{{ $post->date }}</td>
                                 <td class="d-flex">
                                     <a href="{{ route("admin.posts.edit", $post->id) }}" class="btn btn-sm btn-success">Edit</a>
-                                    <form action="{{ route("admin.posts.destroy", $post->id) }}" method="POST">
+                                </td>
+                                <td>
+                                    <form action="{{route('admin.posts.destroy', $post->id)}}" method="post" class="rs_delete_form" data-comic-name="{{ $post->title }}">
                                         @csrf
-                                        @method("DELETE")
-                                        <button type="submit" class="btn btn-sm text-danger">Delete</button>
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                     </form>
                                 </td>
                             </tr>

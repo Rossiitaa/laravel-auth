@@ -1,20 +1,22 @@
 @extends("layouts.app")
 
+@section("title", "Posts Show")
+
 @section("content")
     <div class="container">
         <div class="row">
-            <div class="col-12 post-card d-flex flex-column p-2">
-                <h2>{{ $post->title }}</h2>
+            <div class="col-12 post-card d-flex flex-column p-2 text-center">
+                <h1>{{ $post->title }}</h1>
                 <h5>{{ $post->date }}</h5>
-                <img src="{{ $post->post_image_url }}" class="w-75 align-self-center" alt="Post Image">
-                <p>{{ $post->content }}</p>
+                <img src="{{ $post->image }}" class="w-50 align-self-center" alt="Post Image">
+                <p class="fw-bold pt-2">{{ $post->content }}</p>
             </div>
             <div class="d-flex justify-content-center w-100">
-                <a href="{{ route("admin.posts.edit", $post->id) }}" class="btn btn-lg btn-success m-3">Edit</a>
-                <form action="{{ route("admin.posts.destroy", $post->id) }}" class="" method="post">
+                <a href="{{ route("admin.posts.edit", $post->id) }}" class="btn btn-success me-3">Edit</a>
+                <form action="{{ route('admin.posts.destroy', $post->id) }}" method="post" class="rs_delete_form" data-comic-name="{{ $post->title }}">
                     @csrf
-                    @method("DELETE")
-                    <button type="submit" class="btn btn-lg btn-danger">Delete</button>
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </div>
         </div>
